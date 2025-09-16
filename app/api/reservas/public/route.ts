@@ -8,15 +8,17 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const edificioId = searchParams.get('edificioId')
-    const salaId = searchParams.get('salaId')
+    const salaIds = searchParams.getAll('salaIds')
 
     // Construir el filtro WHERE
     const where: any = {
       estado: 'CONFIRMADA' // Solo mostrar reservas confirmadas en vista pública
     }
 
-    if (salaId) {
-      where.salaId = salaId
+    if (salaIds.length > 0) {
+      where.salaId = {
+        in: salaIds
+      }
     } else if (edificioId) {
       where.sala = {
         edificioId: edificioId

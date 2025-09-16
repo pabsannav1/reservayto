@@ -32,16 +32,22 @@ cd reservayto
 npm install
 ```
 
-3. **Configurar la base de datos**:
+3. **Configurar variables de entorno**:
 ```bash
-# Ejecutar migraciones
+cp .env.example .env
+```
+Editar `.env` con tus configuraciones.
+
+4. **Configurar la base de datos**:
+```bash
+# Para desarrollo (SQLite)
 npx prisma migrate dev
 
 # Poblar con datos de prueba
 npm run db:seed
 ```
 
-4. **Ejecutar en desarrollo**:
+5. **Ejecutar en desarrollo**:
 ```bash
 npm run dev
 ```
@@ -104,6 +110,51 @@ npm run build       # Build producción
 npm run start       # Servidor producción
 npm run lint        # Linter
 npm run db:seed     # Poblar base de datos
+```
+
+## Deployment en Producción
+
+### Vercel + Neon PostgreSQL
+
+1. **Crear base de datos en Neon**:
+   - Registrarse en [Neon](https://neon.tech)
+   - Crear nueva base de datos PostgreSQL
+   - Copiar la connection string
+
+2. **Configurar variables de entorno en Vercel**:
+   ```
+   DATABASE_URL=postgresql://...
+   NEXTAUTH_URL=https://tu-dominio.vercel.app
+   NEXTAUTH_SECRET=secreto-super-seguro-produccion
+   ```
+
+3. **Deploy**:
+   ```bash
+   # Push a GitHub
+   git push origin main
+
+   # Deploy automático en Vercel
+   # O manual: vercel --prod
+   ```
+
+4. **Ejecutar migraciones en producción**:
+   ```bash
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+
+### Configuración Base de Datos
+
+- **Desarrollo**: SQLite (`file:./dev.db`)
+- **Producción**: PostgreSQL (Neon, Supabase, etc.)
+
+El esquema está configurado para PostgreSQL por defecto. Para desarrollo local con SQLite, cambiar en `prisma/schema.prisma`:
+
+```prisma
+datasource db {
+  provider = "sqlite"  // Cambiar a sqlite para desarrollo
+  url      = env("DATABASE_URL")
+}
 ```
 
 ## Seguridad
