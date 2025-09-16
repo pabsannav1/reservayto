@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        String   @id @default(cuid())
+  nombre    String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  edificios  UsuarioEdificio[]
+  reservas   Reserva[]
+
+  @@map("usuarios")
+}
+
+model Edificio {
+  id          String   @id @default(cuid())
+  nombre      String
+  direccion   String?
+  descripcion String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  usuarios UsuarioEdificio[]
+  salas    Sala[]
+
+  @@map("edificios")
+}
+
+model UsuarioEdificio {
+  id         String   @id @default(cuid())
+  usuarioId  String
+  edificioId String
+  createdAt  DateTime @default(now())
+
+  // Relaciones
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  edificio  Edificio @relation(fields: [edificioId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, edificioId])
+  @@map("usuario_edificio")
+}
+
+model Sala {
+  id           String   @id @default(cuid())
+  edificioId   String
+  nombre       String
+  capacidad    Int?
+  equipamiento String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  edificio  Edificio      @relation(fields: [edificioId], references: [id], onDelete: Cascade)
+  horarios  HorarioSala[]
+  reservas  Reserva[]
+
+  @@map("salas")
+}
+
+model HorarioSala {
+  id          String   @id @default(cuid())
+  salaId      String
+  diaSemana   Int      // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+  horaInicio  String   // Formato "HH:mm"
+  horaFin     String   // Formato "HH:mm"
+  createdAt   DateTime @default(now())
+
+  // Relaciones
+  sala Sala @relation(fields: [salaId], references: [id], onDelete: Cascade)
+
+  @@map("horarios_sala")
+}
+
+model Reserva {
+  id           String        @id @default(cuid())
+  salaId       String
+  usuarioId    String
+  fechaInicio  DateTime
+  fechaFin     DateTime
+  descripcion  String?
+  estado       EstadoReserva @default(PENDIENTE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // Relaciones
+  sala    Sala    @relation(fields: [salaId], references: [id], onDelete: Cascade)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("reservas")
+}
+
+enum EstadoReserva {
+  PENDIENTE
+  CONFIRMADA
+  CANCELADA
+}
