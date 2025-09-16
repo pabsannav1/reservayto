@@ -41,11 +41,14 @@ export default function PublicCalendar() {
 
   useEffect(() => {
     // Cuando se cargan las salas, seleccionar todas por defecto
-    if (salas.length > 0 && salasSeleccionadas.size === 0) {
-      const todasLasSalas = new Set(salasFiltered.map(sala => sala.id))
+    if (Array.isArray(salas) && salas.length > 0 && salasSeleccionadas.size === 0) {
+      const salasAFiltrar = filtroEdificio
+        ? salas.filter(sala => sala.edificioId === filtroEdificio)
+        : salas
+      const todasLasSalas = new Set(salasAFiltrar.map(sala => sala.id))
       setSalasSeleccionadas(todasLasSalas)
     }
-  }, [salas, filtroEdificio])
+  }, [salas, filtroEdificio, salasSeleccionadas.size])
 
   useEffect(() => {
     fetchReservas()
@@ -58,14 +61,27 @@ export default function PublicCalendar() {
         fetch('/api/salas')
       ])
 
-      const edificiosData = await edificiosRes.json()
-      const salasData = await salasRes.json()
+      if (edificiosRes.ok) {
+        const edificiosData = await edificiosRes.json()
+        setEdificios(Array.isArray(edificiosData) ? edificiosData : [])
+      } else {
+        console.error('Error fetching edificios:', edificiosRes.status)
+        setEdificios([])
+      }
 
-      setEdificios(edificiosData)
-      setSalas(salasData)
+      if (salasRes.ok) {
+        const salasData = await salasRes.json()
+        setSalas(Array.isArray(salasData) ? salasData : [])
+      } else {
+        console.error('Error fetching salas:', salasRes.status)
+        setSalas([])
+      }
+
       setLoading(false)
     } catch (error) {
       console.error('Error fetching data:', error)
+      setEdificios([])
+      setSalas([])
       setLoading(false)
     }
   }
@@ -89,16 +105,24 @@ export default function PublicCalendar() {
       }
 
       const response = await fetch(url)
-      const data = await response.json()
-      setReservas(data)
+      if (response.ok) {
+        const data = await response.json()
+        setReservas(Array.isArray(data) ? data : [])
+      } else {
+        console.error('Error fetching reservas:', response.status)
+        setReservas([])
+      }
     } catch (error) {
       console.error('Error fetching reservas:', error)
+      setReservas([])
     }
   }
 
-  const salasFiltered = filtroEdificio
-    ? salas.filter(sala => sala.edificioId === filtroEdificio)
-    : salas
+  const salasFiltered = Array.isArray(salas)
+    ? (filtroEdificio
+       ? salas.filter(sala => sala.edificioId === filtroEdificio)
+       : salas)
+    : []
 
   const handleEdificioChange = (edificioId: string) => {
     setFiltroEdificio(edificioId)
@@ -167,7 +191,7 @@ export default function PublicCalendar() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Todos los edificios</option>
-            {edificios.map(edificio => (
+            {Array.isArray(edificios) && edificios.map(edificio => (
               <option key={edificio.id} value={edificio.id}>
                 {edificio.nombre}
               </option>
@@ -179,8 +203,8 @@ export default function PublicCalendar() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-medium text-gray-700">
-              Salas {filtroEdificio && salas.some(s => s.edificioId === filtroEdificio) &&
-                `(${edificios.find(e => e.id === filtroEdificio)?.nombre})`}
+              Salas {filtroEdificio && Array.isArray(salas) && salas.some(s => s.edificioId === filtroEdificio) &&
+                Array.isArray(edificios) && `(${edificios.find(e => e.id === filtroEdificio)?.nombre})`}
             </label>
             <button
               type="button"
@@ -192,7 +216,7 @@ export default function PublicCalendar() {
           </div>
 
           <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
-            {salasFiltered.length > 0 ? (
+            {Array.isArray(salasFiltered) && salasFiltered.length > 0 ? (
               <div className="space-y-2">
                 {salasFiltered.map(sala => (
                   <label key={sala.id} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
