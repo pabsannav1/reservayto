@@ -204,11 +204,34 @@ export default function AdminDashboard() {
                     Nueva Reserva
                   </Link>
                   <Link
+                    href="/admin/usuarios"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Gestión de Usuarios
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                  <Link
                     href="/admin/reservas"
                     className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Ver Todas las Reservas
+                  </Link>
+                  <Link
+                    href="/admin/edificios"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    <Building2 className="w-4 h-4 mr-2" />
+                    Ver Todos los Edificios
+                  </Link>
+                  <Link
+                    href="/admin/salas"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Ver Todas las Salas
                   </Link>
                 </div>
               </div>
