@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Users, Eye, EyeOff, Save } from 'lucide-react'
@@ -29,7 +29,8 @@ interface Usuario {
   }
 }
 
-export default function EditUsuarioPage({ params }: { params: { id: string } }) {
+export default function EditUsuarioPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
@@ -50,7 +51,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
 
   const fetchUsuario = async () => {
     try {
-      const response = await fetch(`/api/admin/usuarios/${params.id}`)
+      const response = await fetch(`/api/admin/usuarios/${resolvedParams.id}`)
       if (response.ok) {
         const data = await response.json()
         setUsuario(data)
@@ -147,7 +148,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
         updateData.password = password
       }
 
-      const response = await fetch(`/api/admin/usuarios/${params.id}`, {
+      const response = await fetch(`/api/admin/usuarios/${resolvedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +290,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
                       value={nombre}
                       onChange={(e) => setNombre(e.target.value)}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
                       placeholder="Ej. Juan Pérez García"
                     />
                   </div>
@@ -304,7 +305,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
                       placeholder="usuario@ayuntamiento.es"
                     />
                   </div>
@@ -319,7 +320,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
                         placeholder="Dejar vacío para mantener la actual"
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center">

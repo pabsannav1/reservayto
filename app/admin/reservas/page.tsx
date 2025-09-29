@@ -152,7 +152,7 @@ export default function ReservasPage() {
                 id="estado"
                 value={filtroEstado}
                 onChange={(e) => setFiltroEstado(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-700"
               >
                 <option value="">Todos los estados</option>
                 <option value="CONFIRMADA">Confirmadas</option>

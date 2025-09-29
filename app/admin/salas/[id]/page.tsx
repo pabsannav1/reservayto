@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Users, Trash2, Building2 } from 'lucide-react'
@@ -28,7 +28,8 @@ export default function EditSalaPage() {
 
   const router = useRouter()
   const params = useParams()
-  const salaId = params.id as string
+  const resolvedParams = use(params)
+  const salaId = resolvedParams.id as string
 
   useEffect(() => {
     fetchSala()

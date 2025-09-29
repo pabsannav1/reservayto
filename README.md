@@ -1,29 +1,55 @@
-# Sistema de Reservas Municipal
+# 🏛️ Sistema de Reservas Municipal
 
-Sistema web para gestión de reservas de edificios y salas municipales.
+Una aplicación web moderna para la gestión de reservas de salas y espacios municipales, desarrollada con Next.js 15, Prisma y PostgreSQL.
 
-## Características
+## 📖 Descripción
 
-- **Vista Pública**: Calendario con filtros por edificio y sala
-- **Sistema de Autenticación**: Login para administradores
-- **Dashboard Admin**: CRUD de edificios, salas y reservas
-- **Relaciones N:N**: Usuarios pueden gestionar múltiples edificios
-- **Filtros Inteligentes**: Vista de reservas por edificio o sala específica
+Este sistema permite a los ayuntamientos gestionar de manera eficiente las reservas de sus espacios públicos como salones de plenos, salas de reuniones, gimnasios, auditorios y otros edificios municipales.
 
-## Tecnologías
+### ✨ Características Principales
 
-- **Frontend**: Next.js 15, React 19, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Base de datos**: SQLite con Prisma ORM
-- **Autenticación**: NextAuth.js
-- **Calendario**: FullCalendar.js
-- **Icons**: Lucide React
+- **🔐 Autenticación por PIN**: Sistema seguro sin acceso público
+- **👥 Gestión de Roles**: Administradores y usuarios normales
+- **🏢 Gestión de Edificios**: CRUD completo de edificios municipales
+- **🚪 Gestión de Salas**: CRUD completo de salas con capacidad y equipamiento
+- **📅 Sistema de Reservas**: Creación, edición y gestión de reservas
+- **👤 Gestión de Usuarios**: Administración de usuarios y permisos
+- **📊 Dashboard Administrativo**: Vista general de reservas y estadísticas
+- **📱 Interfaz Responsive**: Diseño adaptable a dispositivos móviles
 
-## Instalación
+### 🔧 Funcionalidades por Rol
+
+#### 🔑 Administradores (PIN: 7788)
+- ✅ Gestión completa de usuarios, edificios, salas y reservas
+- ✅ Creación y edición de todos los elementos del sistema
+- ✅ Acceso al panel de administración completo
+- ✅ Asignación de edificios a usuarios
+
+#### 👤 Usuarios Normales (PIN: 5678)
+- ✅ Visualización de calendarios de reservas
+- ✅ Consulta de disponibilidad de salas
+- ✅ Vista de información de edificios y salas
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, NextAuth.js
+- **Base de Datos**: PostgreSQL (Neon), Prisma ORM
+- **Componentes**: Lucide Icons, FullCalendar
+- **Deployment**: Vercel
+
+## 🚀 Instalación y Desarrollo
+
+### Prerrequisitos
+- Node.js 18+
+- npm/yarn
+- Base de datos PostgreSQL
+
+### Configuración Local
 
 1. **Clonar el repositorio**:
 ```bash
-git clone https://github.com/pabsannav1/reservayto.git
+git clone <repository-url>
 cd reservayto
 ```
 
@@ -36,15 +62,18 @@ npm install
 ```bash
 cp .env.example .env
 ```
-Editar `.env` con tus configuraciones.
 
-4. **Configurar la base de datos**:
+Edita `.env` con tus valores:
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/reservas"
+NEXTAUTH_SECRET="tu-clave-secreta-32-caracteres"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+4. **Configurar base de datos**:
 ```bash
-# Para desarrollo (SQLite)
-npx prisma migrate dev
-
-# Poblar con datos de prueba
-npm run db:seed
+npm run db:push      # Sincronizar schema
+npm run db:seed      # Datos iniciales
 ```
 
 5. **Ejecutar en desarrollo**:
@@ -52,118 +81,89 @@ npm run db:seed
 npm run dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+Visita [http://localhost:3000](http://localhost:3000)
 
-## Usuarios de Prueba
+## 🔐 Acceso al Sistema
 
-Después de ejecutar el seed:
+### Usuarios por Defecto:
+- **Admin Municipal**: PIN `7788` (Acceso completo)
+- **Gestor Deportes**: PIN `5678` (Solo consulta)
 
-- **Admin Principal**: admin@ayuntamiento.es / admin123
-- **Gestor Deportes**: deportes@ayuntamiento.es / admin123
+## 📦 Scripts Disponibles
 
-## Estructura del Proyecto
+- `npm run dev` - Servidor de desarrollo
+- `npm run build` - Build de producción
+- `npm run start` - Servidor de producción
+- `npm run db:seed` - Poblar base de datos
+- `npm run db:push` - Sincronizar schema
+- `npm run lint` - Verificar código
 
-```
-app/
-├── api/                 # API endpoints
-│   ├── auth/           # Autenticación NextAuth
-│   ├── edificios/      # CRUD edificios
-│   ├── salas/         # CRUD salas
-│   ├── reservas/      # CRUD reservas
-│   └── admin/         # Endpoints privados
-├── auth/              # Páginas de autenticación
-├── admin/             # Dashboard administrativo
-└── components/        # Componentes React
+## 🌐 Deployment en Vercel
 
-prisma/
-├── schema.prisma      # Esquema de base de datos
-├── seed.ts           # Datos de prueba
-└── migrations/       # Migraciones
-```
+Ver guía completa en [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-## Funcionalidades
+1. **Crear base de datos en Neon**
+2. **Configurar variables de entorno en Vercel**
+3. **Hacer push a Git (deployment automático)**
 
-### Vista Pública
-- Calendario interactivo (día/semana/mes)
-- Filtros por edificio y sala
-- Visualización de reservas confirmadas
-- Botón de acceso para administradores
-
-### Dashboard Admin
-- Panel de estadísticas
-- Gestión de edificios y salas
-- Creación y gestión de reservas
-- Acceso limitado a edificios asignados
-
-### Base de Datos
-- **Usuarios**: Administradores del sistema
-- **Edificios**: Locaciones municipales
-- **Salas**: Espacios dentro de edificios
-- **Reservas**: Bookings con estado y horarios
-- **Horarios**: Disponibilidad de salas por día
-
-## Scripts Disponibles
-
+### Variables de Entorno Requeridas:
 ```bash
-npm run dev         # Desarrollo
-npm run build       # Build producción
-npm run start       # Servidor producción
-npm run lint        # Linter
-npm run db:seed     # Poblar base de datos
+DATABASE_URL=postgresql://...
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=https://your-app.vercel.app
 ```
 
-## Deployment en Producción
+## 📁 Estructura del Proyecto
 
-### Vercel + Neon PostgreSQL
-
-1. **Crear base de datos en Neon**:
-   - Registrarse en [Neon](https://neon.tech)
-   - Crear nueva base de datos PostgreSQL
-   - Copiar la connection string
-
-2. **Configurar variables de entorno en Vercel**:
-   ```
-   DATABASE_URL=postgresql://...
-   NEXTAUTH_URL=https://tu-dominio.vercel.app
-   NEXTAUTH_SECRET=secreto-super-seguro-produccion
-   ```
-
-3. **Deploy**:
-   ```bash
-   # Push a GitHub
-   git push origin main
-
-   # Deploy automático en Vercel
-   # O manual: vercel --prod
-   ```
-
-4. **Ejecutar migraciones en producción**:
-   ```bash
-   npx prisma migrate deploy
-   npx prisma db seed
-   ```
-
-### Configuración Base de Datos
-
-- **Desarrollo**: SQLite (`file:./dev.db`)
-- **Producción**: PostgreSQL (Neon, Supabase, etc.)
-
-El esquema está configurado para PostgreSQL por defecto. Para desarrollo local con SQLite, cambiar en `prisma/schema.prisma`:
-
-```prisma
-datasource db {
-  provider = "sqlite"  // Cambiar a sqlite para desarrollo
-  url      = env("DATABASE_URL")
-}
+```
+├── app/
+│   ├── api/              # API Routes
+│   ├── admin/            # Panel administrativo
+│   ├── auth/             # Autenticación
+│   └── components/       # Componentes React
+├── prisma/
+│   ├── schema.prisma     # Schema de base de datos
+│   └── seed.ts          # Datos iniciales
+├── types/               # Tipos TypeScript
+└── middleware.ts        # Middleware de autenticación
 ```
 
-## Seguridad
+## 🎯 Casos de Uso
 
-- Autenticación requerida para rutas admin
-- Usuarios solo ven/gestionan sus edificios asignados
-- Passwords hasheados con bcrypt
-- Middleware de protección de rutas
+### Para Ayuntamientos:
+- Gestión centralizada de espacios públicos
+- Control de reservas de salones de plenos
+- Administración de instalaciones deportivas
+- Reserva de auditorios para eventos culturales
 
-## Licencia
+### Para Ciudadanos (a través de gestores):
+- Solicitud de espacios para eventos
+- Consulta de disponibilidad
+- Información de equipamiento disponible
 
-MIT
+## 🔒 Seguridad
+
+- ✅ Autenticación obligatoria para todas las rutas
+- ✅ Sistema de roles y permisos
+- ✅ Middleware de protección de rutas
+- ✅ Validación de datos en servidor
+- ✅ Sanitización de inputs
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+
+## 📞 Soporte
+
+Para soporte técnico o consultas:
+- 📧 Email: soporte@ayuntamiento.es
+- 💻 Issues: GitHub Issues
+- 📚 Documentación: [DEPLOYMENT.md](./DEPLOYMENT.md)

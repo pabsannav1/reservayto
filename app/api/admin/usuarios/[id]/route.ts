@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
 // GET - Obtener un usuario específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession()
@@ -16,8 +16,9 @@ export async function GET(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    const resolvedParams = await params
     const usuario = await prisma.usuario.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: {
         id: true,
         nombre: true,
@@ -57,7 +58,7 @@ export async function GET(
 // PUT - Actualizar un usuario
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession()
@@ -65,6 +66,7 @@ export async function PUT(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    const resolvedParams = await params
     const body = await request.json()
     const { nombre, email, password, edificiosIds } = body
 
@@ -74,7 +76,7 @@ export async function PUT(
 
     // Verificar que el usuario existe
     const usuarioExistente = await prisma.usuario.findUnique({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     if (!usuarioExistente) {
@@ -105,7 +107,7 @@ export async function PUT(
 
     // Actualizar usuario
     const usuario = await prisma.usuario.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: updateData
     })
 
@@ -113,7 +115,7 @@ export async function PUT(
     if (Array.isArray(edificiosIds)) {
       // Eliminar asociaciones existentes
       await prisma.usuarioEdificio.deleteMany({
-        where: { usuarioId: params.id }
+        where: { usuarioId: resolvedParams.id }
       })
 
       // Crear nuevas asociaciones
@@ -122,7 +124,7 @@ export async function PUT(
           edificiosIds.map((edificioId: string) =>
             prisma.usuarioEdificio.create({
               data: {
-                usuarioId: params.id,
+                usuarioId: resolvedParams.id,
                 edificioId
               }
             })
@@ -133,7 +135,7 @@ export async function PUT(
 
     // Retornar usuario actualizado con edificios
     const usuarioCompleto = await prisma.usuario.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: {
         id: true,
         nombre: true,
@@ -162,7 +164,7 @@ export async function PUT(
 // DELETE - Eliminar un usuario
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession()
@@ -170,9 +172,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
+    const resolvedParams = await params
     // Verificar que el usuario existe
     const usuarioExistente = await prisma.usuario.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: {
         id: true,
         email: true,
@@ -202,7 +205,7 @@ export async function DELETE(
 
     // Eliminar usuario (las asociaciones se eliminan automáticamente por CASCADE)
     await prisma.usuario.delete({
-      where: { id: params.id }
+      where: { id: resolvedParams.id }
     })
 
     return NextResponse.json({ message: 'Usuario eliminado correctamente' })

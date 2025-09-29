@@ -18,7 +18,9 @@ async function main() {
     data: {
       nombre: 'Admin Municipal',
       email: 'admin@ayuntamiento.es',
-      password: hashedPassword
+      password: hashedPassword,
+      pin: '7788',
+      rol: 'ADMIN'
     }
   })
 
@@ -26,7 +28,9 @@ async function main() {
     data: {
       nombre: 'Gestor Deportes',
       email: 'deportes@ayuntamiento.es',
-      password: hashedPassword
+      password: hashedPassword,
+      pin: '5678',
+      rol: 'NORMAL'
     }
   })
 
@@ -206,8 +210,9 @@ async function main() {
   })
 
   console.log('✅ Datos de prueba creados exitosamente')
-  console.log('👤 Usuario de prueba: admin@ayuntamiento.es / admin123')
-  console.log('👤 Usuario deportes: deportes@ayuntamiento.es / admin123')
+  console.log('👤 Admin Municipal: PIN 7788 (Administrador)')
+  console.log('👤 Gestor Deportes: PIN 5678 (Usuario normal)')
+  console.log('📧 Email de referencia: admin@ayuntamiento.es')
 }
 
 main()

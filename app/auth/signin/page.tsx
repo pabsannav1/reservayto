@@ -5,8 +5,7 @@ import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function SignInPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [pin, setPin] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -18,13 +17,12 @@ export default function SignInPage() {
 
     try {
       const result = await signIn('credentials', {
-        email,
-        password,
+        pin,
         redirect: false,
       })
 
       if (result?.error) {
-        setError('Credenciales inválidas')
+        setError('PIN inválido')
       } else {
         router.push('/admin')
       }
@@ -40,44 +38,29 @@ export default function SignInPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Iniciar Sesión
+            Acceso al Sistema
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Acceso para administradores
+            Ingrese su PIN para acceder
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md shadow-sm">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email
+              <label htmlFor="pin" className="sr-only">
+                PIN
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Dirección de email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Contraseña
-              </label>
-              <input
-                id="password"
-                name="password"
+                id="pin"
+                name="pin"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="off"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                maxLength={4}
+                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-700 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg text-center font-mono"
+                placeholder="••••"
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
               />
             </div>
           </div>
@@ -98,12 +81,9 @@ export default function SignInPage() {
         </form>
 
         <div className="text-center">
-          <a
-            href="/"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            ← Volver al calendario público
-          </a>
+          <p className="text-sm text-gray-600">
+            Sistema de Reservas Municipal
+          </p>
         </div>
       </div>
     </div>

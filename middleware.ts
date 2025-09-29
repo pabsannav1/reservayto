@@ -2,20 +2,26 @@ import { withAuth } from "next-auth/middleware"
 
 export default withAuth(
   function middleware(req) {
-    // Middleware logic here if needed
+    // Check if user has admin role for admin routes
+    if (req.nextUrl.pathname.startsWith('/admin')) {
+      const token = req.nextauth.token
+      if (token?.rol !== 'ADMIN') {
+        return Response.redirect(new URL('/', req.url))
+      }
+    }
+
+    // Check if user has admin role for admin API routes
+    if (req.nextUrl.pathname.startsWith('/api/admin')) {
+      const token = req.nextauth.token
+      if (token?.rol !== 'ADMIN') {
+        return Response.json({ error: 'Acceso denegado' }, { status: 403 })
+      }
+    }
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow public API routes
-        if (req.nextUrl.pathname.startsWith('/api/edificios') ||
-            req.nextUrl.pathname.startsWith('/api/salas') ||
-            req.nextUrl.pathname.startsWith('/api/reservas/public') ||
-            req.nextUrl.pathname.startsWith('/api/public/')) {
-          return true
-        }
-
-        // Require authentication for admin routes and other API routes
+        // Require authentication for all routes
         return !!token
       },
     },
@@ -24,10 +30,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/api/admin/:path*',
-    '/api/reservas/:path*',
-    '/api/edificios/:path*',
-    '/api/salas/:path*',
+    '/((?!api/auth|auth/signin|_next/static|_next/image|favicon.ico).*)',
   ]
 }
