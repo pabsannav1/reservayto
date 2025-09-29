@@ -28,16 +28,18 @@
 - Framework: **Next.js** (auto-detectado)
 
 ### 2. Variables de Entorno
-En Vercel Dashboard > Settings > Environment Variables, agrega:
+En Vercel Dashboard > Settings > Environment Variables, agrega **UNA POR UNA**:
 
-```bash
-# Base de datos (OBLIGATORIO)
-DATABASE_URL=postgresql://tu-usuario:tu-password@tu-host.neon.tech/tu-db?sslmode=require
+| Variable | Valor | Environments |
+|----------|-------|--------------|
+| `DATABASE_URL` | `postgresql://tu-usuario:tu-password@tu-host.neon.tech/tu-db?sslmode=require` | Production, Preview, Development |
+| `NEXTAUTH_SECRET` | `tu-clave-secreta-minimo-32-caracteres` | Production, Preview, Development |
+| `NEXTAUTH_URL` | `https://tu-app.vercel.app` | Production, Preview |
 
-# NextAuth (OBLIGATORIO)
-NEXTAUTH_SECRET=tu-clave-secreta-minimo-32-caracteres
-NEXTAUTH_URL=https://tu-app.vercel.app
-```
+**⚠️ IMPORTANTE**:
+- Configura las variables **ANTES** del primer deployment
+- Usa la URL completa de Neon incluyendo `?sslmode=require`
+- Genera NEXTAUTH_SECRET con: `openssl rand -base64 32`
 
 ### 3. Generar NEXTAUTH_SECRET
 ```bash
@@ -91,18 +93,31 @@ Después del deployment, tendrás estos usuarios:
 
 ## 🆘 Troubleshooting
 
+### Error: "Environment Variable references Secret which does not exist"
+- **Solución**: Configura las variables directamente en Vercel Dashboard
+- Ve a Settings > Environment Variables
+- NO uses secretos de Vercel, usa variables normales
+
 ### Error: "DATABASE_URL not found"
 - Verifica que la variable esté configurada en Vercel
 - Asegúrate que la URL incluya `?sslmode=require`
+- Verifica que esté habilitada para "Production"
 
 ### Error: "NEXTAUTH_SECRET not found"
 - Genera una clave secreta: `openssl rand -base64 32`
 - Configúrala en variables de entorno de Vercel
+- Verifica que esté habilitada para "Production"
+
+### Build falla en "prisma db push"
+- Verifica que DATABASE_URL sea correcta
+- Confirma que la base de datos Neon esté activa
+- Revisa logs completos en Vercel Dashboard
 
 ### Base de datos no se inicializa
 - Revisa logs de build en Vercel Dashboard
 - Verifica que la URL de Neon sea correcta
 - Confirma que la base de datos está activa en Neon
+- Verifica que el comando de build incluya `prisma db push`
 
 ## 🎯 Resultado Final
 
