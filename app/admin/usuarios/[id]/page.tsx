@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Users, Eye, EyeOff, Save } from 'lucide-react'
@@ -29,7 +29,8 @@ interface Usuario {
   }
 }
 
-export default function EditUsuarioPage({ params }: { params: { id: string } }) {
+export default function EditUsuarioPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
@@ -50,7 +51,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
 
   const fetchUsuario = async () => {
     try {
-      const response = await fetch(`/api/admin/usuarios/${params.id}`)
+      const response = await fetch(`/api/admin/usuarios/${resolvedParams.id}`)
       if (response.ok) {
         const data = await response.json()
         setUsuario(data)
@@ -152,7 +153,7 @@ export default function EditUsuarioPage({ params }: { params: { id: string } }) 
         updateData.password = password
       }
 
-      const response = await fetch(`/api/admin/usuarios/${params.id}`, {
+      const response = await fetch(`/api/admin/usuarios/${resolvedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
