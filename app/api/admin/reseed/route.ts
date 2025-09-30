@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { exec } from 'child_process'
+import { promisify } from 'util'
 
-const prisma = new PrismaClient()
+const execAsync = promisify(exec)
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,24 +13,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Re-ejecutar seed
-    const { exec } = require('child_process')
-
-    return new Promise((resolve) => {
-      exec('npm run db:seed', (error: any, stdout: any, stderr: any) => {
-        if (error) {
-          resolve(NextResponse.json({
-            error: 'Seed failed',
-            details: error.message
-          }, { status: 500 }))
-        } else {
-          resolve(NextResponse.json({
-            message: 'Database reseeded successfully',
-            output: stdout
-          }))
-        }
+    try {
+      const { stdout } = await execAsync('npm run db:seed')
+      return NextResponse.json({
+        message: 'Database reseeded successfully',
+        output: stdout
       })
-    })
-  } catch (error) {
+    } catch (execError) {
+      const error = execError as Error
+      return NextResponse.json({
+        error: 'Seed failed',
+        details: error.message
+      }, { status: 500 })
+    }
+  } catch {
     return NextResponse.json({
       error: 'Failed to reseed database'
     }, { status: 500 })
