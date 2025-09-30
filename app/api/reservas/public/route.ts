@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     // Construir el filtro WHERE
     const where: {
-      estado: string;
+      estado: 'CONFIRMADA';
       salaId?: { in: string[] } | string;
       sala?: { edificioId: string };
     } = {

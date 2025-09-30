@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Building2, Trash2, Users, MapPin } from 'lucide-react'
@@ -29,8 +29,7 @@ export default function EditEdificioPage() {
 
   const router = useRouter()
   const params = useParams()
-  const resolvedParams = use(params)
-  const edificioId = resolvedParams.id as string
+  const edificioId = params.id as string
 
   useEffect(() => {
     fetchEdificio()

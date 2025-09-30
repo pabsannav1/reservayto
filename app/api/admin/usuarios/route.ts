@@ -75,12 +75,22 @@ export async function POST(request: NextRequest) {
     // Hash de la contraseña
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    // Generar PIN único de 4 dígitos
+    let pin: string
+    let pinExistente = true
+    do {
+      pin = Math.floor(1000 + Math.random() * 9000).toString()
+      const existingUser = await prisma.usuario.findUnique({ where: { pin } })
+      pinExistente = !!existingUser
+    } while (pinExistente)
+
     // Crear usuario
     const usuario = await prisma.usuario.create({
       data: {
         nombre,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        pin
       }
     })
 

@@ -118,8 +118,9 @@ export async function PUT(
 // DELETE - Eliminar un edificio
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
