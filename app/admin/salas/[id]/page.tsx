@@ -253,7 +253,7 @@ export default function EditSalaPage() {
               ¿Eliminar sala?
             </h3>
             <p className="text-sm text-gray-600 mb-6">
-              Esta acción eliminará permanentemente la sala "{sala.nombre}" y todas sus reservas.
+              Esta acción eliminará permanentemente la sala &quot;{sala.nombre}&quot; y todas sus reservas.
               Esta acción no se puede deshacer.
             </p>
             <div className="flex justify-end space-x-3">

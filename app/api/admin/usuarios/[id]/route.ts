@@ -95,7 +95,11 @@ export async function PUT(
     }
 
     // Preparar datos de actualización
-    const updateData: any = {
+    const updateData: {
+      nombre: string;
+      email: string;
+      password?: string;
+    } = {
       nombre,
       email
     }

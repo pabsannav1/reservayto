@@ -11,7 +11,11 @@ export async function GET(request: NextRequest) {
     const salaIds = searchParams.getAll('salaIds')
 
     // Construir el filtro WHERE
-    const where: any = {
+    const where: {
+      estado: string;
+      salaId?: { in: string[] } | string;
+      sala?: { edificioId: string };
+    } = {
       estado: 'CONFIRMADA' // Solo mostrar reservas confirmadas en vista pública
     }
 

@@ -287,7 +287,7 @@ export default function EditEdificioPage() {
               ¿Eliminar edificio?
             </h3>
             <p className="text-sm text-gray-600 mb-6">
-              Esta acción eliminará permanentemente el edificio "{edificio.nombre}" y todas sus salas y reservas.
+              Esta acción eliminará permanentemente el edificio &quot;{edificio.nombre}&quot; y todas sus salas y reservas.
               Esta acción no se puede deshacer.
             </p>
             <div className="flex justify-end space-x-3">

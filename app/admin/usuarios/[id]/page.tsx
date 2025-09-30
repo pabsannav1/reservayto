@@ -57,7 +57,7 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
         setUsuario(data)
         setNombre(data.nombre)
         setEmail(data.email)
-        const edificiosIds = data.edificios.map((rel: any) => rel.edificio.id)
+        const edificiosIds = data.edificios.map((rel: { edificio: { id: string } }) => rel.edificio.id)
         setEdificiosSeleccionados(new Set(edificiosIds))
       } else {
         if (response.status === 404) {
@@ -138,7 +138,12 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
     }
 
     try {
-      const updateData: any = {
+      const updateData: {
+        nombre: string;
+        email: string;
+        edificiosIds: string[];
+        password?: string;
+      } = {
         nombre: nombre.trim(),
         email: email.trim().toLowerCase(),
         edificiosIds: Array.from(edificiosSeleccionados)
