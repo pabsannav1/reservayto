@@ -7,8 +7,9 @@ const prisma = new PrismaClient()
 // GET - Obtener una sala específica
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
@@ -16,7 +17,7 @@ export async function GET(
     }
 
     const sala = await prisma.sala.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         edificio: {
           include: {
@@ -54,8 +55,9 @@ export async function GET(
 // PUT - Actualizar una sala
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
@@ -71,7 +73,7 @@ export async function PUT(
 
     // Verificar que la sala existe y que el usuario tiene acceso
     const salaExistente = await prisma.sala.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         edificio: {
           include: {
@@ -99,7 +101,7 @@ export async function PUT(
     }
 
     const sala = await prisma.sala.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nombre,
         capacidad,
@@ -120,8 +122,9 @@ export async function PUT(
 // DELETE - Eliminar una sala
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
@@ -130,7 +133,7 @@ export async function DELETE(
 
     // Verificar que la sala existe y que el usuario tiene acceso
     const salaExistente = await prisma.sala.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         edificio: {
           include: {
@@ -158,7 +161,7 @@ export async function DELETE(
     }
 
     await prisma.sala.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Sala eliminada correctamente' })

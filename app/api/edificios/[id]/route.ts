@@ -7,8 +7,9 @@ const prisma = new PrismaClient()
 // GET - Obtener un edificio específico
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
@@ -16,7 +17,7 @@ export async function GET(
     }
 
     const edificio = await prisma.edificio.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         usuarios: {
           include: {
@@ -57,8 +58,9 @@ export async function GET(
 // PUT - Actualizar un edificio
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   try {
     const session = await getServerSession()
     if (!session?.user?.email) {
@@ -74,7 +76,7 @@ export async function PUT(
 
     // Verificar que el edificio existe y que el usuario tiene acceso
     const edificioExistente = await prisma.edificio.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         usuarios: {
           include: {
@@ -98,7 +100,7 @@ export async function PUT(
     }
 
     const edificio = await prisma.edificio.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         nombre,
         direccion,
@@ -126,7 +128,7 @@ export async function DELETE(
 
     // Verificar que el edificio existe y que el usuario tiene acceso
     const edificioExistente = await prisma.edificio.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         usuarios: {
           include: {
@@ -150,7 +152,7 @@ export async function DELETE(
     }
 
     await prisma.edificio.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Edificio eliminado correctamente' })
