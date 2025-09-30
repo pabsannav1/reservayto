@@ -35,6 +35,7 @@ En Vercel Dashboard > Settings > Environment Variables, agrega **UNA POR UNA**:
 | `DATABASE_URL` | `postgresql://tu-usuario:tu-password@tu-host.neon.tech/tu-db?sslmode=require` | Production, Preview, Development |
 | `NEXTAUTH_SECRET` | `tu-clave-secreta-minimo-32-caracteres` | Production, Preview, Development |
 | `NEXTAUTH_URL` | `https://tu-app.vercel.app` | Production, Preview |
+| `ADMIN_SECRET` | `clave-para-reseed-db` (opcional) | Production, Preview, Development |
 
 **⚠️ IMPORTANTE**:
 - Configura las variables **ANTES** del primer deployment
@@ -103,10 +104,15 @@ Después del deployment, tendrás estos usuarios:
 - Asegúrate que la URL incluya `?sslmode=require`
 - Verifica que esté habilitada para "Production"
 
-### Error: "NEXTAUTH_SECRET not found"
-- Genera una clave secreta: `openssl rand -base64 32`
-- Configúrala en variables de entorno de Vercel
-- Verifica que esté habilitada para "Production"
+### Error: "NEXTAUTH_SECRET not found" o "[next-auth][error][NO_SECRET]"
+- **Síntoma**: Error 500 en `/api/auth/error` con mensaje "Please define a `secret` in production"
+- **Causa**: Variable `NEXTAUTH_SECRET` no configurada en Vercel
+- **Solución**:
+  1. Genera una clave secreta: `openssl rand -base64 32`
+  2. Ve a Vercel Dashboard > Settings > Environment Variables
+  3. Agrega `NEXTAUTH_SECRET` con el valor generado
+  4. Selecciona Production, Preview, Development
+  5. Redespliega desde Dashboard o con `git push`
 
 ### Build falla en "prisma db push"
 - Verifica que DATABASE_URL sea correcta
