@@ -30,7 +30,7 @@ export default function NewUsuarioPage() {
 
   const fetchEdificios = async () => {
     try {
-      const response = await fetch('/api/edificios')
+      const response = await fetch('/api/admin/edificios')
       if (response.ok) {
         const data = await response.json()
         setEdificios(Array.isArray(data) ? data : [])
