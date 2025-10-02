@@ -54,12 +54,12 @@ export default function PublicCalendar() {
       if (salasDelEdificio.length > 0) {
         // Solo cambiar si no hay sala seleccionada o la sala actual no pertenece al edificio
         const salaActualValida = salasDelEdificio.some(s => s.id === salaSeleccionada)
-        if (!salaActualValida) {
+        if (!salaSeleccionada || !salaActualValida) {
           setSalaSeleccionada(salasDelEdificio[0].id)
         }
       }
     }
-  }, [filtroEdificio, salas, salaSeleccionada])
+  }, [filtroEdificio, salas])
 
   useEffect(() => {
     fetchReservas()
