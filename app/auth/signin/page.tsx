@@ -57,7 +57,7 @@ export default function SignInPage() {
                 autoComplete="off"
                 required
                 maxLength={4}
-                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-700 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg text-center font-mono"
+                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 text-gray-900 placeholder-gray-400 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-lg text-center font-mono"
                 placeholder="••••"
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}

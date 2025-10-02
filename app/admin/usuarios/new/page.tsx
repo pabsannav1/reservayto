@@ -164,7 +164,7 @@ export default function NewUsuarioPage() {
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                   placeholder="Ej. Juan Pérez García"
                 />
               </div>
@@ -179,7 +179,7 @@ export default function NewUsuarioPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                   placeholder="usuario@ayuntamiento.es"
                 />
               </div>
@@ -196,7 +196,7 @@ export default function NewUsuarioPage() {
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
                     required
                     maxLength={4}
-                    className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
+                    className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                     placeholder="0000"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center">

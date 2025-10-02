@@ -222,7 +222,7 @@ export default function NewReservaPage() {
                       value={fechaInicio || getDefaultStartTime()}
                       onChange={(e) => setFechaInicio(e.target.value)}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-700"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400"
                     />
                   </div>
 
@@ -236,7 +236,7 @@ export default function NewReservaPage() {
                       value={fechaFin || getDefaultEndTime()}
                       onChange={(e) => setFechaFin(e.target.value)}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-700"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -250,7 +250,7 @@ export default function NewReservaPage() {
                     value={descripcion}
                     onChange={(e) => setDescripcion(e.target.value)}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-700"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400"
                     placeholder="Describe brevemente el evento o reunión..."
                   />
                 </div>

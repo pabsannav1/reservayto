@@ -144,7 +144,7 @@ export default function NewSalaPage() {
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
                 placeholder="Ej. Salón de Plenos, Sala de Reuniones A..."
               />
             </div>
@@ -159,7 +159,7 @@ export default function NewSalaPage() {
                 value={capacidad}
                 onChange={(e) => setCapacidad(e.target.value)}
                 min="1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
                 placeholder="Ej. 50"
               />
             </div>
@@ -173,7 +173,7 @@ export default function NewSalaPage() {
                 value={equipamiento}
                 onChange={(e) => setEquipamiento(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
                 placeholder="Descripción del equipamiento disponible: proyector, sistema de sonido, mesas, sillas..."
               />
             </div>
