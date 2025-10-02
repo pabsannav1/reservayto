@@ -16,9 +16,6 @@
     "deploy:db": "prisma generate && prisma db push",
     "deploy:full": "npm run deploy:db && npm run db:seed && next build"
   },
-  "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
