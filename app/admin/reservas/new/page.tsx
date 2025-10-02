@@ -62,6 +62,25 @@ export default function NewReservaPage() {
     ? salas.filter(sala => sala.edificioId === edificioId)
     : salas
 
+  const handleFechaInicioChange = (value: string) => {
+    setFechaInicio(value)
+
+    // Calcular fecha de fin automáticamente (1 hora después)
+    if (value) {
+      const inicio = new Date(value)
+      const fin = new Date(inicio.getTime() + 60 * 60 * 1000) // Añadir 1 hora
+
+      // Formatear para datetime-local input
+      const year = fin.getFullYear()
+      const month = String(fin.getMonth() + 1).padStart(2, '0')
+      const day = String(fin.getDate()).padStart(2, '0')
+      const hours = String(fin.getHours()).padStart(2, '0')
+      const minutes = String(fin.getMinutes()).padStart(2, '0')
+
+      setFechaFin(`${year}-${month}-${day}T${hours}:${minutes}`)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -220,7 +239,7 @@ export default function NewReservaPage() {
                       type="datetime-local"
                       id="fechaInicio"
                       value={fechaInicio || getDefaultStartTime()}
-                      onChange={(e) => setFechaInicio(e.target.value)}
+                      onChange={(e) => handleFechaInicioChange(e.target.value)}
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400"
                     />
