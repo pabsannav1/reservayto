@@ -9,13 +9,13 @@ export async function GET() {
   try {
     const session = await getServerSession()
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
     // Obtener edificios asignados al usuario
     const usuarioConEdificios = await prisma.usuario.findUnique({
-      where: { id: session.user.id },
+      where: { email: session.user.email },
       include: {
         edificios: {
           include: {
