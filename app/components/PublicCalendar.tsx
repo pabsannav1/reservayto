@@ -197,6 +197,7 @@ export default function PublicCalendar() {
             onChange={(e) => handleEdificioChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+            {!filtroEdificio && <option value="">Selecciona un edificio</option>}
             {Array.isArray(edificios) && edificios.map(edificio => (
               <option key={edificio.id} value={edificio.id}>
                 {edificio.nombre}
@@ -215,7 +216,9 @@ export default function PublicCalendar() {
             value={salaSeleccionada}
             onChange={(e) => handleSalaChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={!filtroEdificio || salasFiltered.length === 0}
           >
+            {!salaSeleccionada && <option value="">Selecciona una sala</option>}
             {Array.isArray(salasFiltered) && salasFiltered.length > 0 ? (
               salasFiltered.map(sala => (
                 <option key={sala.id} value={sala.id}>
