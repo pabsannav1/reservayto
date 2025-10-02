@@ -33,7 +33,7 @@ export default function PublicCalendar() {
   const [edificios, setEdificios] = useState<Edificio[]>([])
   const [salas, setSalas] = useState<Sala[]>([])
   const [filtroEdificio, setFiltroEdificio] = useState<string>('')
-  const [salasSeleccionadas, setSalasSeleccionadas] = useState<Set<string>>(new Set())
+  const [salaSeleccionada, setSalaSeleccionada] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,19 +41,29 @@ export default function PublicCalendar() {
   }, [])
 
   useEffect(() => {
-    // Cuando se cargan las salas, seleccionar todas por defecto
-    if (Array.isArray(salas) && salas.length > 0 && salasSeleccionadas.size === 0) {
-      const salasAFiltrar = filtroEdificio
-        ? salas.filter(sala => sala.edificioId === filtroEdificio)
-        : salas
-      const todasLasSalas = new Set(salasAFiltrar.map(sala => sala.id))
-      setSalasSeleccionadas(todasLasSalas)
+    // Cuando se cargan los edificios, seleccionar el primero por defecto
+    if (Array.isArray(edificios) && edificios.length > 0 && !filtroEdificio) {
+      setFiltroEdificio(edificios[0].id)
     }
-  }, [salas, filtroEdificio, salasSeleccionadas.size])
+  }, [edificios, filtroEdificio])
+
+  useEffect(() => {
+    // Cuando cambia el edificio, seleccionar la primera sala del edificio
+    if (filtroEdificio && Array.isArray(salas) && salas.length > 0) {
+      const salasDelEdificio = salas.filter(sala => sala.edificioId === filtroEdificio)
+      if (salasDelEdificio.length > 0) {
+        // Solo cambiar si no hay sala seleccionada o la sala actual no pertenece al edificio
+        const salaActualValida = salasDelEdificio.some(s => s.id === salaSeleccionada)
+        if (!salaActualValida) {
+          setSalaSeleccionada(salasDelEdificio[0].id)
+        }
+      }
+    }
+  }, [filtroEdificio, salas, salaSeleccionada])
 
   useEffect(() => {
     fetchReservas()
-  }, [filtroEdificio, salasSeleccionadas])
+  }, [salaSeleccionada])
 
   const fetchData = async () => {
     try {
@@ -92,13 +102,8 @@ export default function PublicCalendar() {
       let url = '/api/reservas/public'
       const params = new URLSearchParams()
 
-      if (filtroEdificio) {
-        params.append('edificioId', filtroEdificio)
-      } else if (salasSeleccionadas.size > 0) {
-        // Si hay salas seleccionadas específicamente, las incluimos
-        salasSeleccionadas.forEach(salaId => {
-          params.append('salaIds', salaId)
-        })
+      if (salaSeleccionada) {
+        params.append('salaIds', salaSeleccionada)
       }
 
       if (params.toString()) {
@@ -127,29 +132,10 @@ export default function PublicCalendar() {
 
   const handleEdificioChange = (edificioId: string) => {
     setFiltroEdificio(edificioId)
-    // Resetear selección de salas cuando cambia el edificio
-    setSalasSeleccionadas(new Set())
   }
 
-  const handleSalaToggle = (salaId: string) => {
-    const newSelection = new Set(salasSeleccionadas)
-    if (newSelection.has(salaId)) {
-      newSelection.delete(salaId)
-    } else {
-      newSelection.add(salaId)
-    }
-    setSalasSeleccionadas(newSelection)
-  }
-
-  const handleToggleAll = () => {
-    if (salasSeleccionadas.size === salasFiltered.length) {
-      // Deseleccionar todas
-      setSalasSeleccionadas(new Set())
-    } else {
-      // Seleccionar todas las salas filtradas
-      const todasLasSalas = new Set(salasFiltered.map(sala => sala.id))
-      setSalasSeleccionadas(todasLasSalas)
-    }
+  const handleSalaChange = (salaId: string) => {
+    setSalaSeleccionada(salaId)
   }
 
   const calendarEvents = reservas.map(reserva => {
@@ -211,7 +197,6 @@ export default function PublicCalendar() {
             onChange={(e) => handleEdificioChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Todos los edificios</option>
             {Array.isArray(edificios) && edificios.map(edificio => (
               <option key={edificio.id} value={edificio.id}>
                 {edificio.nombre}
@@ -220,52 +205,27 @@ export default function PublicCalendar() {
           </select>
         </div>
 
-        {/* Filtro por Salas con Checkboxes */}
+        {/* Filtro por Sala (selector único) */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-gray-700">
-              Salas {filtroEdificio && Array.isArray(salas) && salas.some(s => s.edificioId === filtroEdificio) &&
-                Array.isArray(edificios) && `(${edificios.find(e => e.id === filtroEdificio)?.nombre})`}
-            </label>
-            <button
-              type="button"
-              onClick={handleToggleAll}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-            >
-              {salasSeleccionadas.size === salasFiltered.length ? 'Deseleccionar todas' : 'Seleccionar todas'}
-            </button>
-          </div>
-
-          <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+          <label htmlFor="sala" className="block text-sm font-medium text-gray-700 mb-2">
+            Sala
+          </label>
+          <select
+            id="sala"
+            value={salaSeleccionada}
+            onChange={(e) => handleSalaChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
             {Array.isArray(salasFiltered) && salasFiltered.length > 0 ? (
-              <div className="space-y-2">
-                {salasFiltered.map(sala => (
-                  <label key={sala.id} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
-                    <input
-                      type="checkbox"
-                      checked={salasSeleccionadas.has(sala.id)}
-                      onChange={() => handleSalaToggle(sala.id)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-3 text-sm text-gray-700">
-                      {sala.nombre}
-                      {!filtroEdificio && (
-                        <span className="text-gray-500 ml-1">({sala.edificio.nombre})</span>
-                      )}
-                    </span>
-                  </label>
-                ))}
-              </div>
+              salasFiltered.map(sala => (
+                <option key={sala.id} value={sala.id}>
+                  {sala.nombre}
+                </option>
+              ))
             ) : (
-              <p className="text-sm text-gray-500 text-center py-4">
-                {filtroEdificio ? 'No hay salas en este edificio' : 'No hay salas disponibles'}
-              </p>
+              <option value="">No hay salas disponibles</option>
             )}
-          </div>
-
-          <div className="mt-2 text-xs text-gray-500">
-            {salasSeleccionadas.size} de {salasFiltered.length} salas seleccionadas
-          </div>
+          </select>
         </div>
       </div>
 
