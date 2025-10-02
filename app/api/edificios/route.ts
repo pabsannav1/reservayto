@@ -42,7 +42,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession()
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -51,6 +51,15 @@ export async function POST(request: NextRequest) {
 
     if (!nombre) {
       return NextResponse.json({ error: 'El nombre es requerido' }, { status: 400 })
+    }
+
+    // Obtener el usuario por email
+    const usuario = await prisma.usuario.findUnique({
+      where: { email: session.user.email }
+    })
+
+    if (!usuario) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
     const edificio = await prisma.edificio.create({
@@ -64,7 +73,7 @@ export async function POST(request: NextRequest) {
     // Asignar automáticamente el edificio al usuario que lo creó
     await prisma.usuarioEdificio.create({
       data: {
-        usuarioId: session.user.id,
+        usuarioId: usuario.id,
         edificioId: edificio.id
       }
     })
