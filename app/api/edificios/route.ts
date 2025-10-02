@@ -4,14 +4,32 @@ import { getServerSession } from 'next-auth'
 
 const prisma = new PrismaClient()
 
-// GET - Obtener todos los edificios (público)
+// GET - Obtener edificios asignados al usuario autenticado
 export async function GET() {
   try {
-    const edificios = await prisma.edificio.findMany({
-      orderBy: {
-        nombre: 'asc'
+    const session = await getServerSession()
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    // Obtener edificios asignados al usuario
+    const usuarioConEdificios = await prisma.usuario.findUnique({
+      where: { id: session.user.id },
+      include: {
+        edificios: {
+          include: {
+            edificio: true
+          }
+        }
       }
     })
+
+    if (!usuarioConEdificios) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
+    }
+
+    const edificios = usuarioConEdificios.edificios.map(ue => ue.edificio)
 
     return NextResponse.json(edificios)
   } catch (error) {

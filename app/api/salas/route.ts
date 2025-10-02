@@ -4,10 +4,40 @@ import { getServerSession } from 'next-auth'
 
 const prisma = new PrismaClient()
 
-// GET - Obtener todas las salas (público)
+// GET - Obtener salas de edificios asignados al usuario autenticado
 export async function GET() {
   try {
+    const session = await getServerSession()
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    // Obtener edificios asignados al usuario
+    const usuarioConEdificios = await prisma.usuario.findUnique({
+      where: { id: session.user.id },
+      include: {
+        edificios: {
+          select: {
+            edificioId: true
+          }
+        }
+      }
+    })
+
+    if (!usuarioConEdificios) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
+    }
+
+    const edificioIds = usuarioConEdificios.edificios.map(ue => ue.edificioId)
+
+    // Obtener salas solo de los edificios asignados
     const salas = await prisma.sala.findMany({
+      where: {
+        edificioId: {
+          in: edificioIds
+        }
+      },
       include: {
         edificio: true
       },
