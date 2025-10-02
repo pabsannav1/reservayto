@@ -14,8 +14,8 @@ interface Edificio {
 export default function NewUsuarioPage() {
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const [pin, setPin] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const [edificiosSeleccionados, setEdificiosSeleccionados] = useState<Set<string>>(new Set())
   const [edificios, setEdificios] = useState<Edificio[]>([])
   const [loading, setLoading] = useState(false)
@@ -64,15 +64,10 @@ export default function NewUsuarioPage() {
     }
   }
 
-  const generatePassword = () => {
-    const length = 12
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
-    let password = ""
-    for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length))
-    }
-    setPassword(password)
-    setShowPassword(true)
+  const generatePin = () => {
+    const pin = Math.floor(1000 + Math.random() * 9000).toString()
+    setPin(pin)
+    setShowPin(true)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,14 +75,14 @@ export default function NewUsuarioPage() {
     setLoading(true)
     setError('')
 
-    if (!nombre.trim() || !email.trim() || !password.trim()) {
+    if (!nombre.trim() || !email.trim() || !pin.trim()) {
       setError('Todos los campos son requeridos')
       setLoading(false)
       return
     }
 
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+    if (!/^\d{4}$/.test(pin)) {
+      setError('El PIN debe ser de 4 dígitos')
       setLoading(false)
       return
     }
@@ -101,7 +96,7 @@ export default function NewUsuarioPage() {
         body: JSON.stringify({
           nombre: nombre.trim(),
           email: email.trim().toLowerCase(),
-          password,
+          pin,
           edificiosIds: Array.from(edificiosSeleccionados)
         })
       })
@@ -190,36 +185,37 @@ export default function NewUsuarioPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Contraseña *
+                <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
+                  PIN de Acceso (4 dígitos) *
                 </label>
                 <div className="relative">
                   <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type={showPin ? "text" : "password"}
+                    id="pin"
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
                     required
+                    maxLength={4}
                     className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="0000"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center">
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPin(!showPin)}
                       className="px-3 py-2 text-gray-400 hover:text-gray-600"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
                 <div className="mt-2">
                   <button
                     type="button"
-                    onClick={generatePassword}
+                    onClick={generatePin}
                     className="text-sm text-indigo-600 hover:text-indigo-500"
                   >
-                    Generar contraseña segura
+                    Generar PIN aleatorio
                   </button>
                 </div>
               </div>
@@ -287,7 +283,7 @@ export default function NewUsuarioPage() {
               </Link>
               <button
                 type="submit"
-                disabled={loading || !nombre.trim() || !email.trim() || !password.trim()}
+                disabled={loading || !nombre.trim() || !email.trim() || !pin.trim()}
                 className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Creando...' : 'Crear Usuario'}

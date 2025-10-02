@@ -57,10 +57,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { nombre, email, password, edificiosIds } = body
+    const { nombre, email, pin, edificiosIds } = body
 
-    if (!nombre || !email || !password) {
-      return NextResponse.json({ error: 'Nombre, email y contraseña son requeridos' }, { status: 400 })
+    if (!nombre || !email || !pin) {
+      return NextResponse.json({ error: 'Nombre, email y PIN son requeridos' }, { status: 400 })
+    }
+
+    // Validar formato de PIN (4 dígitos)
+    if (!/^\d{4}$/.test(pin)) {
+      return NextResponse.json({ error: 'El PIN debe ser de 4 dígitos' }, { status: 400 })
     }
 
     // Verificar que el email no existe
@@ -72,17 +77,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ya existe un usuario con este email' }, { status: 409 })
     }
 
-    // Hash de la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // Verificar que el PIN no existe
+    const pinExistente = await prisma.usuario.findUnique({
+      where: { pin }
+    })
 
-    // Generar PIN único de 4 dígitos
-    let pin: string
-    let pinExistente = true
-    do {
-      pin = Math.floor(1000 + Math.random() * 9000).toString()
-      const existingUser = await prisma.usuario.findUnique({ where: { pin } })
-      pinExistente = !!existingUser
-    } while (pinExistente)
+    if (pinExistente) {
+      return NextResponse.json({ error: 'Este PIN ya está en uso' }, { status: 409 })
+    }
+
+    // Crear password basado en el PIN (para compatibilidad con el esquema)
+    const hashedPassword = await bcrypt.hash(pin, 10)
 
     // Crear usuario
     const usuario = await prisma.usuario.create({

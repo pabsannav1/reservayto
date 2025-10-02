@@ -34,8 +34,8 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const [pin, setPin] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const [edificiosSeleccionados, setEdificiosSeleccionados] = useState<Set<string>>(new Set())
   const [edificios, setEdificios] = useState<Edificio[]>([])
   const [loading, setLoading] = useState(false)
@@ -109,15 +109,10 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
     }
   }
 
-  const generatePassword = () => {
-    const length = 12
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
-    let password = ""
-    for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length))
-    }
-    setPassword(password)
-    setShowPassword(true)
+  const generatePin = () => {
+    const pin = Math.floor(1000 + Math.random() * 9000).toString()
+    setPin(pin)
+    setShowPin(true)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,8 +126,8 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
       return
     }
 
-    if (password.trim() !== '' && password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres')
+    if (pin.trim() !== '' && !/^\d{4}$/.test(pin)) {
+      setError('El PIN debe ser de 4 dígitos')
       setLoading(false)
       return
     }
@@ -142,15 +137,15 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
         nombre: string;
         email: string;
         edificiosIds: string[];
-        password?: string;
+        pin?: string;
       } = {
         nombre: nombre.trim(),
         email: email.trim().toLowerCase(),
         edificiosIds: Array.from(edificiosSeleccionados)
       }
 
-      if (password.trim() !== '') {
-        updateData.password = password
+      if (pin.trim() !== '') {
+        updateData.pin = pin
       }
 
       const response = await fetch(`/api/admin/usuarios/${resolvedParams.id}`, {
@@ -316,35 +311,36 @@ export default function EditUsuarioPage({ params }: { params: Promise<{ id: stri
                   </div>
 
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                      Nueva Contraseña (opcional)
+                    <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
+                      Nuevo PIN (opcional, 4 dígitos)
                     </label>
                     <div className="relative">
                       <input
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        type={showPin ? "text" : "password"}
+                        id="pin"
+                        value={pin}
+                        onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                        maxLength={4}
                         className="w-full px-3 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-700"
-                        placeholder="Dejar vacío para mantener la actual"
+                        placeholder="Dejar vacío para mantener el actual"
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center">
                         <button
                           type="button"
-                          onClick={() => setShowPassword(!showPassword)}
+                          onClick={() => setShowPin(!showPin)}
                           className="px-3 py-2 text-gray-400 hover:text-gray-600"
                         >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                       </div>
                     </div>
                     <div className="mt-2">
                       <button
                         type="button"
-                        onClick={generatePassword}
+                        onClick={generatePin}
                         className="text-sm text-indigo-600 hover:text-indigo-500"
                       >
-                        Generar nueva contraseña segura
+                        Generar nuevo PIN aleatorio
                       </button>
                     </div>
                   </div>

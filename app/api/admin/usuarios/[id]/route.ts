@@ -68,7 +68,7 @@ export async function PUT(
 
     const resolvedParams = await params
     const body = await request.json()
-    const { nombre, email, password, edificiosIds } = body
+    const { nombre, email, pin, edificiosIds } = body
 
     if (!nombre || !email) {
       return NextResponse.json({ error: 'Nombre y email son requeridos' }, { status: 400 })
@@ -99,14 +99,29 @@ export async function PUT(
       nombre: string;
       email: string;
       password?: string;
+      pin?: string;
     } = {
       nombre,
       email
     }
 
-    // Si se proporciona nueva contraseña, hashearla
-    if (password && password.trim() !== '') {
-      updateData.password = await bcrypt.hash(password, 10)
+    // Si se proporciona nuevo PIN, validarlo y actualizarlo
+    if (pin && pin.trim() !== '') {
+      if (!/^\d{4}$/.test(pin)) {
+        return NextResponse.json({ error: 'El PIN debe ser de 4 dígitos' }, { status: 400 })
+      }
+
+      // Verificar que el PIN no está siendo usado por otro usuario
+      const pinEnUso = await prisma.usuario.findUnique({
+        where: { pin }
+      })
+
+      if (pinEnUso && pinEnUso.id !== resolvedParams.id) {
+        return NextResponse.json({ error: 'Este PIN ya está en uso' }, { status: 409 })
+      }
+
+      updateData.pin = pin
+      updateData.password = await bcrypt.hash(pin, 10)
     }
 
     // Actualizar usuario
