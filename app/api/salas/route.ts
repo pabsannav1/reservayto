@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { nombre, edificioId, capacidad, equipamiento } = body
+    const { nombre, edificioId, capacidad, equipamiento, color } = body
 
     if (!nombre || !edificioId) {
       return NextResponse.json({ error: 'El nombre y edificio son requeridos' }, { status: 400 })
@@ -73,7 +73,8 @@ export async function POST(request: NextRequest) {
         nombre,
         edificioId,
         capacidad,
-        equipamiento
+        equipamiento,
+        color
       },
       include: {
         edificio: true

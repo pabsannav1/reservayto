@@ -65,6 +65,7 @@ model Sala {
   nombre       String
   capacidad    Int?
   equipamiento String?
+  color        String?  // Color en formato hex para el calendario
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

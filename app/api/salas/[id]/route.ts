@@ -65,7 +65,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { nombre, capacidad, equipamiento } = body
+    const { nombre, capacidad, equipamiento, color } = body
 
     if (!nombre) {
       return NextResponse.json({ error: 'El nombre es requerido' }, { status: 400 })
@@ -105,7 +105,8 @@ export async function PUT(
       data: {
         nombre,
         capacidad,
-        equipamiento
+        equipamiento,
+        color
       },
       include: {
         edificio: true

@@ -15,6 +15,7 @@ export default function NewSalaPage() {
   const [edificioId, setEdificioId] = useState('')
   const [capacidad, setCapacidad] = useState('')
   const [equipamiento, setEquipamiento] = useState('')
+  const [color, setColor] = useState('#3b82f6')
   const [edificios, setEdificios] = useState<Edificio[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingEdificios, setLoadingEdificios] = useState(true)
@@ -55,7 +56,8 @@ export default function NewSalaPage() {
           nombre,
           edificioId,
           capacidad: capacidad ? parseInt(capacidad) : null,
-          equipamiento: equipamiento || null
+          equipamiento: equipamiento || null,
+          color: color || null
         })
       })
 
@@ -174,6 +176,22 @@ export default function NewSalaPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-700"
                 placeholder="Descripción del equipamiento disponible: proyector, sistema de sonido, mesas, sillas..."
               />
+            </div>
+
+            <div>
+              <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
+                Color para el calendario
+              </label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="color"
+                  id="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="h-10 w-20 border border-gray-300 rounded cursor-pointer"
+                />
+                <span className="text-sm text-gray-600">{color}</span>
+              </div>
             </div>
 
             <div className="flex justify-end space-x-3 pt-6">

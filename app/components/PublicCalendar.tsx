@@ -17,6 +17,7 @@ interface Sala {
   nombre: string
   edificioId: string
   edificio: Edificio
+  color?: string
 }
 
 interface Reserva {
@@ -151,19 +152,39 @@ export default function PublicCalendar() {
     }
   }
 
-  const calendarEvents = reservas.map(reserva => ({
-    id: reserva.id,
-    title: `${reserva.sala.nombre} - ${reserva.descripcion || 'Reserva'}`,
-    start: reserva.fechaInicio,
-    end: reserva.fechaFin,
-    backgroundColor: '#3b82f6',
-    borderColor: '#1d4ed8',
-    extendedProps: {
-      sala: reserva.sala.nombre,
-      edificio: reserva.sala.edificio.nombre,
-      descripcion: reserva.descripcion
+  const calendarEvents = reservas.map(reserva => {
+    const salaColor = reserva.sala.color || '#3b82f6'
+    const borderColor = reserva.sala.color ? adjustColorBrightness(reserva.sala.color, -20) : '#1d4ed8'
+
+    return {
+      id: reserva.id,
+      title: `${reserva.sala.nombre} - ${reserva.descripcion || 'Reserva'}`,
+      start: reserva.fechaInicio,
+      end: reserva.fechaFin,
+      backgroundColor: salaColor,
+      borderColor: borderColor,
+      extendedProps: {
+        sala: reserva.sala.nombre,
+        edificio: reserva.sala.edificio.nombre,
+        descripcion: reserva.descripcion
+      }
     }
-  }))
+  })
+
+  // Función auxiliar para ajustar el brillo del color
+  function adjustColorBrightness(hex: string, percent: number): string {
+    const num = parseInt(hex.replace('#', ''), 16)
+    const amt = Math.round(2.55 * percent)
+    const R = (num >> 16) + amt
+    const G = (num >> 8 & 0x00FF) + amt
+    const B = (num & 0x0000FF) + amt
+    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+      (B < 255 ? B < 1 ? 0 : B : 255))
+      .toString(16)
+      .slice(1)
+      .toUpperCase()
+  }
 
   if (loading) {
     return (
