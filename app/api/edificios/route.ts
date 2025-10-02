@@ -42,7 +42,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession()
-    if (!session) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -58,6 +58,14 @@ export async function POST(request: NextRequest) {
         nombre,
         direccion,
         descripcion
+      }
+    })
+
+    // Asignar automáticamente el edificio al usuario que lo creó
+    await prisma.usuarioEdificio.create({
+      data: {
+        usuarioId: session.user.id,
+        edificioId: edificio.id
       }
     })
 
